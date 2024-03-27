@@ -10,3 +10,4 @@ seaborn==0.13.2
 streamlit==1.32.2
 underthesea==6.7.0
 wordcloud==1.9.3
+xgboost
