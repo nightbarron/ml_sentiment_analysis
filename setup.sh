@@ -11,4 +11,6 @@ port = $PORT\n\
 " > ~/.streamlit/config.toml
 
 # Install JAVA_HOME
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+# sudo add-apt-repository ppa:webupd8team/java
+# apt-get install default-jdk -y
+# export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
