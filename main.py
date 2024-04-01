@@ -70,8 +70,24 @@ def stat_restaurant(restaurant_id, reviews, restaurants):
     avg_rating = restaurant_reviews['Rating'].mean().round(2)
     st.write("Average rating:", avg_rating, "```/10```")
 
-    st.write("Top 30 key words in good comments: ", ', '.join(top_30_words_good.index))
-    st.write("Top 30 key words in bad comments: ", ', '.join(top_30_words_bad.index))
+    # Remove N in top 30 words
+    list_top_30_words_good = top_30_words_good.index.tolist()
+    list_top_30_words_bad = top_30_words_bad.index.tolist()
+
+    # list to string
+    str_top_30_words_good = ' '.join(list_top_30_words_good)
+    str_top_30_words_bad = ' '.join(list_top_30_words_bad)
+
+    # Pos tag   
+    after_postag_top_30_words_good = pp.process_postag_thesea_adj(str_top_30_words_good)
+    after_postag_top_30_words_bad = pp.process_postag_thesea_adj(str_top_30_words_bad)
+
+    # parse to list
+    after_postag_top_30_words_good = str.split(after_postag_top_30_words_good)
+    after_postag_top_30_words_bad = str.split(after_postag_top_30_words_bad)
+
+    st.write("Top key words in good comments: ", ', '.join(after_postag_top_30_words_good))
+    st.write("Top key words in bad comments: ", ', '.join(after_postag_top_30_words_bad))
 
     st.write("""- Thống kê số lượng bình luận theo Rating_Class""")
     # Thong ke so luong binh luan theo Rating_Class
@@ -280,7 +296,8 @@ Kết luận: Có sự phân bố nhà hàng, khung giờ bán và giá món ăn
     elif choice == menu[2]:  
         st.subheader("Dự đoán mới")
         st.write("""### 1. Hiển thị thông tin nhà hàng theo ID""")
-        restaurant_id = st.text_input("Nhập ID nhà hàng", "1")
+        list_restaurant_id = restaurants['ID'].values
+        restaurant_id = st.selectbox("Chọn ID nhà hàng", list_restaurant_id)
         if st.button("Xem"):
             stat_restaurant(restaurant_id, reviews, restaurants)
 
@@ -294,8 +311,9 @@ Kết luận: Có sự phân bố nhà hàng, khung giờ bán và giá món ăn
             sentence = st.text_input("Nhập bình luận", "Nhà hàng này rất ngon")
             if st.button("Dự đoán"):
                 sentiment_ml, sentiment_bd = check_sentiment(sentence, ml_model, ml_vectorizer, bd_model, pipelineModel, spark)
-                st.write("=> ML model: ```", sentiment_ml + "```")
-                st.write("=> BigData model: ```", sentiment_bd + "```")
+                # st.write("=> ML model: ```", sentiment_ml + "```")
+                # st.write("=> BigData model: ```", sentiment_bd + "```")
+                st.write("Predict: ```", sentiment_ml + "```")
         else:
             uploaded_file = st.file_uploader("Chọn file", type=['txt'])
             if uploaded_file is not None:
@@ -306,8 +324,9 @@ Kết luận: Có sự phân bố nhà hàng, khung giờ bán và giá món ăn
                     for sentence in content.split("\n"):
                         sentiment_ml, sentiment_bd = check_sentiment(sentence, ml_model, ml_vectorizer, bd_model, pipelineModel, spark)
                         st.write("[*] Sentence: ```", sentence + "```")
-                        st.write("=> ML model: ```", sentiment_ml + "```")
-                        st.write("=> BigData model: ```", sentiment_bd + "```")
+                        # st.write("=> ML model: ```", sentiment_ml + "```")
+                        # st.write("=> BigData model: ```", sentiment_bd + "```")
+                        st.write("Predict: ```", sentiment_ml + "```")
     else:
         st.write("Invalid choice")
         return
